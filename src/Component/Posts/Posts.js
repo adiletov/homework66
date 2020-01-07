@@ -8,6 +8,7 @@ class Posts extends Component {
     state={
        isOpen: false,
        onePost: null,
+        loading: false
     };
 
 
@@ -15,6 +16,7 @@ class Posts extends Component {
         await axiosApi.delete('/posts/'+ c + '/' + id + '.json');
         this.openCard()
     };
+
 
     openCard = async (id) =>{
         const res = await axiosApi.get('/posts/' + id + '.json');

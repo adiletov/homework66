@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from "react";
-import {Modal} from "reactstrap";
+import {Modal, Spinner} from "reactstrap";
 
 
 const withErrorHandler = (WrappedComponent, axios ) =>{
@@ -11,10 +11,17 @@ const withErrorHandler = (WrappedComponent, axios ) =>{
                error: null,
                modal: false,
                interceptorsId: '',
+               loading: false,
            };
+        axios.interceptors.request.use(req=> {
+            this.setState({loading: true});
+            return req;
+        });
 
-
-          this.state.interceptorsId =  axios.interceptors.response.use(res=> res  , error => {
+          this.state.interceptorsId =  axios.interceptors.response.use(res=>
+                  {this.setState({loading: false});
+                  return res},
+                  error => {
                this.setState({error, modal: true});
                throw error;
            });
@@ -31,6 +38,7 @@ const withErrorHandler = (WrappedComponent, axios ) =>{
         render() {
             return (
                 <Fragment>
+                    {this.state.loading&& <Spinner/>}
                     <WrappedComponent {...this.props}/>
                     {this.state.error ?
                         <Modal isOpen={this.state.modal}>
